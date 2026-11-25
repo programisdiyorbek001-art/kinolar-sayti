@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KinoOlam — Portal & Admin Panel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #141414;
+      color: #ffffff;
+      padding-bottom: 50px;
+    }
+
+    /* Header */
+    header {
+      background-color: #0b0b0b;
+      padding: 15px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #e50914;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .search-bar input {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: none;
+      outline: none;
+      background-color: #333;
+      color: white;
+      width: 200px;
+      font-size: 14px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .btn-danger {
+      background-color: #e50914;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #b80710;
+    }
+
+    .btn-secondary {
+      background-color: #333;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #444;
+    }
+
+    /* Navigatsiya */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      background-color: #1a1a1a;
+      padding: 12px;
+      border-bottom: 1px solid #333;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 5px 15px;
+    }
+
+    .tab-btn.active {
+      color: #e50914;
+      border-bottom: 2px solid #e50914;
+    }
+
+    /* Asosiy Sektsiyalar */
+    .section {
+      display: none;
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* Janrlar */
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .cat-btn.active {
+      background-color: #e50914;
+      border-color: #e50914;
+    }
+
+    /* Kino Grid */
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 25px;
+    }
+
+    .movie-card {
+      background-color: #1f1f1f;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .movie-poster {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      background-color: #333;
+    }
+
+    .movie-info {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .movie-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .movie-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #bbb;
+      margin-bottom: 10px;
+    }
+
+    .rating {
+      color: #ffc107;
+      font-weight: bold;
+    }
+
+    .movie-desc {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 15px;
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+
+    /* Admin Forma */
+    .admin-form-container {
+      background-color: #1f1f1f;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .admin-form-container h2 {
+      margin-bottom: 20px;
+      color: #e50914;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background-color: #2b2b2b;
+      color: white;
+      outline: none;
+    }
+
+    /* Modal Oynalar */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: #1f1f1f;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #aaa;
+    }
+
+    /* Jadval */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #1f1f1f;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      background-color: #2b2b2b;
+      color: #e50914;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo" onclick="openTab('main')">KinoOlam</div>
+    <div class="header-actions">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Qidirish..." onkeyup="filterMovies()">
+      </div>
+      <button class="btn btn-secondary" id="authBtn" onclick="openAuthModal()">Kirish / Ro'yxatdan o'tish</button>
+    </div>
+  </header>
+
+  <!-- Navigatsiya -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="tabMainBtn" onclick="openTab('main')">Asosiy Sahifa</button>
+    <button class="tab-btn" id="tabAdminBtn" onclick="tryOpenAdmin()">🔒 Admin Panel</button>
+  </div>
+
+  <!-- ASOSIY SAHIFA -->
+  <div id="mainSection" class="section active">
+    <div class="categories">
+      <button class="cat-btn active" onclick="filterCategory('all', this)">Barchasi</button>
+      <button class="cat-btn" onclick="filterCategory('jangari', this)">Jangari</button>
+      <button class="cat-btn" onclick="filterCategory('fantastika', this)">Fantastika</button>
+      <button class="cat-btn" onclick="filterCategory('drama', this)">Drama</button>
+      <button class="cat-btn" onclick="filterCategory('komediya', this)">Komediya</button>
+    </div>
+
+    <div class="movie-grid" id="movieGrid"></div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminSection" class="section">
+    <div class="admin-form-container">
+      <h2>Yangi Kino Qo'shish</h2>
+      <form id="addMovieForm" onsubmit="handleAddMovie(event)">
+        <div class="form-group">
+          <label>Kino Nomi:</label>
+          <input type="text" id="mTitle" required placeholder="Masalan: Interstellar">
+        </div>
+        <div class="form-group">
+          <label>Janri:</label>
+          <select id="mCategory" required>
+            <option value="fantastika">Fantastika</option>
+            <option value="jangari">Jangari</option>
+            <option value="drama">Drama</option>
+            <option value="komediya">Komediya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Chaqarilgan Yili va Reyting:</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="number" id="mYear" required placeholder="Yil (2024)" style="width: 50%;">
+            <input type="text" id="mRating" required placeholder="Reyting (8.5)" style="width: 50%;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Rasm URL (Poster Havolasi):</label>
+          <input type="url" id="mImage" required placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="form-group">
+          <label>Video / Treyler Havolasi (URL):</label>
+          <input type="url" id="mVideo" required placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+        <div class="form-group">
+          <label>Tavsif (Syujet):</label>
+          <textarea id="mDesc" rows="3" required placeholder="Kino haqida qisqacha..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger" style="width: 100%;">+ Kinoni Baza va Saytga Qo'shish</button>
+      </form>
+    </div>
+
+    <h2 style="margin-bottom: 15px;">Mavjud Kinolar Ro'yxati</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rasm</th>
+          <th>Nomi</th>
+          <th>Janri</th>
+          <th>Reyting</th>
+          <th>Amal</th>
+        </tr>
+      </thead>
+      <tbody id="adminTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ADMIN PAROL MODALI -->
+  <div class="modal" id="adminPassModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeAdminPassModal()">&times;</span>
+      <h2 style="margin-bottom: 15px; color: #e50914;">Admin Parolini Kiriting</h2>
+      <form onsubmit="handleAdminAuth(event)">
+        <div class="form-group">
+          <label>Maxfiy Kod:</label>
+          <input type="password" id="adminPasswordInput" placeholder="Kodni kiriting (masalan: 7579)" required>
+        </div>
+        <button type="submit" class="btn btn-danger" style="width: 100%;">Panelga Kirish</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- RO'YXATDAN O'TISH VA KIRISH MODALI -->
+  <div class="modal" id="authModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+      <h2 id="modalTitle" style="margin-bottom: 20px; color: #e50914;">Tizimga Kirish</h2>
+      <form id="userAuthForm" onsubmit="handleUserAuth(event)">
+        <div class="form-group">
+          <label>Foydalanuvchi nomi:</label>
+          <input type="text" id="authUsername" required placeholder="Loginingizni kiriting">
+        </div>
+        <div class="form-group">
+          <label>Parol:</label>
+          <input type="password" id="authPassword" required placeholder="******">
+        </div>
+        <button type="submit" class="btn btn-danger" style="width: 100%; margin-top: 10px;" id="authSubmitBtn">Kirish</button>
+      </form>
+      <p style="margin-top: 15px; font-size: 13px; text-align: center; color: #aaa;">
+        <span id="authToggleQuestion">Akkountingiz yo'qmi?</span> 
+        <a href="#" onclick="toggleAuthMode(event)" style="color: #e50914; text-decoration: underline;" id="authToggleLink">Ro'yxatdan o'ting</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_PASS = "7579";
+    let isAdminLoggedIn = false;
+    let isRegisterMode = false;
+
+    const defaultMovies = [
+      {
+        id: 1,
+        title: "Interstellar",
+        category: "fantastika",
+        year: 2014,
+        rating: "8.7",
+        image: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500&q=80",
+        video: "https://www.youtube.com/watch?v=zSWdZVtXT7E",
+        desc: "Insoniyatni saqlab qolish uchun yangi uy qidirib koinotga yo'l olgan fazogirlar haqida ilmiy-fantastik film."
+      },
+      {
+        id: 2,
+        title: "Qora Ritsar (Batman)",
+        category: "jangari",
+        year: 2008,
+        rating: "9.0",
+        image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&q=80",
+        video: "https://www.youtube.com/watch?v=EXeTwQWrcwY",
+        desc: "Betmen Gotam shahrini xaosga solmoqchi bo'lgan shafqatsiz Jokerga qarshi kurashadi."
+      }
+    ];
+
+    let movies = JSON.parse(localStorage.getItem('my_movies')) || defaultMovies;
+    let currentUser = JSON.parse(localStorage.getItem('current_user')) || null;
+
+    window.onload = function() {
+      saveAndRender();
+      updateUserUI();
+    };
+
+    function saveAndRender() {
+      localStorage.setItem('my_movies', JSON.stringify(movies));
+      renderMovies(movies);
+      renderAdminTable();
+    }
+
+    function renderMovies(data) {
+      const grid = document.getElementById('movieGrid');
+      grid.innerHTML = '';
+
+      if(data.length === 0) {
+        grid.innerHTML = '<p style="color: #888;">Hech qanday kino topilmadi.</p>';
+        return;
+      }
+
+      data.forEach(movie => {
+        grid.innerHTML += `
+          <div class="movie-card" data-category="${movie.category}" data-title="${movie.title.toLowerCase()}">
+            <img src="${movie.image}" alt="${movie.title}" class="movie-poster" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?w=500&q=80'">
+            <div class="movie-info">
+              <div class="movie-title">${movie.title}</div>
+              <div class="movie-meta">
+                <span>${movie.year} • ${movie.category.toUpperCase()}</span>
+                <span class="rating">★ ${movie.rating}</span>
+              </div>
+              <p class="movie-desc">${movie.desc}</p>
+              <a href="${movie.video}" target="_blank" class="btn btn-danger" style="text-align: center; text-decoration: none;">▶ Tomosha qilish</a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminTableBody');
+      tbody.innerHTML = '';
+
+      movies.forEach(movie => {
+        tbody.innerHTML += `
+          <tr>
+            <td><img src="${movie.image}" style="width: 40px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+            <td><b>${movie.title}</b></td>
+            <td>${movie.category}</td>
+            <td>★ ${movie.rating}</td>
+            <td>
+              <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;" onclick="deleteMovie(${movie.id})">O'chirish</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function handleAddMovie(e) {
+      e.preventDefault();
+
+      const newMovie = {
+        id: Date.now(),
+        title: document.getElementById('mTitle').value,
+        category: document.getElementById('mCategory').value,
+        year: document.getElementById('mYear').value,
+        rating: document.getElementById('mRating').value,
+        image: document.getElementById('mImage').value,
+        video: document.getElementById('mVideo').value,
+        desc: document.getElementById('mDesc').value
+      };
+
+      movies.push(newMovie);
+      saveAndRender();
+
+      document.getElementById('addMovieForm').reset();
+      alert("Kino muvaffaqiyatli qo'shildi!");
+      openTab('main');
+    }
+
+    function deleteMovie(id) {
+      if(confirm("Haqiqatdan ham ushbu kinoni o'chirmoqchimisiz?")) {
+        movies = movies.filter(m => m.id !== id);
+        saveAndRender();
+      }
+    }
+
+    function filterMovies() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = movies.filter(m => m.title.toLowerCase().includes(input));
+      renderMovies(filtered);
+    }
+
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if(cat === 'all') {
+        renderMovies(movies);
+      } else {
+        const filtered = movies.filter(m => m.category === cat);
+        renderMovies(filtered);
+      }
+    }
+
+    /* Tablarni Almashtirish */
+    function openTab(tabName) {
+      document.getElementById('mainSection').classList.remove('active');
+      document.getElementById('adminSection').classList.remove('active');
+      document.getElementById('tabMainBtn').classList.remove('active');
+      document.getElementById('tabAdminBtn').classList.remove('active');
+
+      if(tabName === 'main') {
+        document.getElementById('mainSection').classList.add('active');
+        document.getElementById('tabMainBtn').classList.add('active');
+      } else if(tabName === 'admin') {
+        document.getElementById('adminSection').classList.add('active');
+        document.getElementById('tabAdminBtn').classList.add('active');
+      }
+    }
+
+    /* Admin Paneliga Kirish Tekshiruvi */
+    function tryOpenAdmin() {
+      if(isAdminLoggedIn) {
+        openTab('admin');
+      } else {
+        document.getElementById('adminPassModal').style.display = 'flex';
+      }
+    }
+
+    function closeAdminPassModal() {
+      document.getElementById('adminPassModal').style.display = 'none';
+      document.getElementById('adminPasswordInput').value = '';
+    }
+
+    function handleAdminAuth(e) {
+      e.preventDefault();
+      const pass = document.getElementById('adminPasswordInput').value;
+
+      if(pass === ADMIN_PASS) {
+        isAdminLoggedIn = true;
+        closeAdminPassModal();
+        openTab('admin');
+        alert("Admin paneli muvaffaqiyatli ochildi!");
+      } else {
+        alert("Parol noto'g'ri! (Parol: 7579)");
+      }
+    }
+
+    /* Ro'yxatdan O'tish va Kirish Modali Logikasi */
+    function openAuthModal() {
+      if(currentUser) {
+        if(confirm(`Siz ${currentUser.username} profilidasiz. Tizimdan chiqmoqchimisiz?`)) {
+          currentUser = null;
+          localStorage.removeItem('current_user');
+          updateUserUI();
+        }
+      } else {
+        document.getElementById('authModal').style.display = 'flex';
+      }
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    function toggleAuthMode(e) {
+      e.preventDefault();
+      isRegisterMode = !isRegisterMode;
+
+      const title = document.getElementById('modalTitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const question = document.getElementById('authToggleQuestion');
+      const link = document.getElementById('authToggleLink');
+
+      if(isRegisterMode) {
+        title.innerText = "Ro'yxatdan O'tish";
+        submitBtn.innerText = "Ro'yxatdan O'tish";
+        question.innerText = "Akkountingiz bormi?";
+        link.innerText = "Kirish";
+      } else {
+        title.innerText = "Tizimga Kirish";
+        submitBtn.innerText = "Kirish";
+        question.innerText = "Akkountingiz yo'qmi?";
+        link.innerText = "Ro'yxatdan o'ting";
+      }
+    }
+
+    function handleUserAuth(e) {
+      e.preventDefault();
+      const username = document.getElementById('authUsername').value;
+
+      currentUser = { username: username };
+      localStorage.setItem('current_user', JSON.stringify(currentUser));
+
+      updateUserUI();
+      closeAuthModal();
+
+      if(isRegisterMode) {
+        alert(`Muvaffaqiyatli ro'yxatdan o'tdingiz, ${username}!`);
+      } else {
+        alert(`Xush kelibsiz, ${username}!`);
+      }
+      document.getElementById('userAuthForm').reset();
+    }
+
+    function updateUserUI() {
+      const btn = document.getElementById('authBtn');
+      if(currentUser) {
+        btn.innerText = `Chiqish (${currentUser.username})`;
+        btn.classList.replace('btn-secondary', 'btn-danger');
+      } else {
+        btn.innerText = "Kirish / Ro'yxatdan o'tish";
+        btn.classList.replace('btn-danger', 'btn-secondary');
+      }
+    }
+  </script>
+</body>
+</html>
